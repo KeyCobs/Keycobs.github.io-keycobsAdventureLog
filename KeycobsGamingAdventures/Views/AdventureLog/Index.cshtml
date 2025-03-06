@@ -1,0 +1,171 @@
+﻿@using KeycobsGamingAdventures.Models.Entity
+@model IEnumerable<AdventureLog>
+
+@{
+    ViewData["Title"] = "Game Log";
+}
+
+<h2>Game Log</h2>
+
+<div class="enemy-scroll-container">
+    <h3>Enemies</h3>
+    <div class="enemy-scroll-wrapper">
+        <div class="enemy-scroll-content">
+            @foreach (var log in ViewBag.Enemies)
+            {
+                @if (log != null && !string.IsNullOrWhiteSpace(log.Name))
+                {
+                    <div class="enemy-item">
+                        <img src="~/Lib/Images/@log.EnemyImage" alt="@log.Name" class="enemy-image" />
+                        <span class="enemy-name">@log.Name</span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Type</th>
+            <th>Event</th>
+            <th>Enemy Name</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td>@log.LogId</td>
+                <td>@log.Type</td>
+                <td>@log.Event</td>
+                <td>@(log.Enemy != null ? log.Enemy.Name : "")</td>
+                <td>@log.TimeStamp</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<style>
+    .enemy-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .enemy-image {
+        width: 100px; /* Adjust as needed */
+        height: auto;
+        border-radius: 5px;
+    }
+
+    .enemy-name {
+        margin-top: 5px;
+        font-weight: bold;
+    }
+
+    .enemy-scroll-container {
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .enemy-scroll-wrapper {
+        display: flex;
+        overflow-x: auto; /* Allow manual scrolling */
+        scroll-behavior: smooth; /* Smooth scrolling */
+        scrollbar-width: none; /* Hide scrollbar in Firefox */
+        -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+    }
+
+        .enemy-scroll-wrapper::-webkit-scrollbar {
+            display: none; /* Hide scrollbar in Chrome/Safari */
+        }
+
+    .enemy-scroll-content {
+        display: flex;
+        gap: 20px;
+        white-space: nowrap;
+        width: max-content;
+        animation: scrollenemies 50s linear infinite;
+    }
+
+    .enemy-name {
+        font-weight: bold;
+        font-size: 18px;
+        padding: 5px 15px;
+        background-color: #f1f1f1;
+        border-radius: 5px;
+        display: inline-block;
+    }
+
+    @@keyframes scrollenemies {
+        from
+
+    {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+
+    }
+
+    /* Pause animation on hover or manual scroll */
+    .enemy-scroll-container:hover .enemy-scroll-content {
+        animation-play-state: paused;
+    }
+
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let scrollWrapper = document.querySelector('.enemy-scroll-wrapper');
+        let scrollContent = document.querySelector('.enemy-scroll-content');
+
+        if (!scrollWrapper || !scrollContent) {
+            console.error("Error: Enemy scroll elements not found.");
+            return;
+        }
+
+        function duplicateContent() {
+            let originalItems = Array.from(scrollContent.children);
+
+            // Duplicate content until it's long enough for seamless looping
+            while (scrollContent.scrollWidth < window.innerWidth * 2) {
+                originalItems.forEach(item => {
+                    let clone = item.cloneNode(true);
+                    scrollContent.appendChild(clone);
+                });
+            }
+        }
+
+        duplicateContent(); // Ensure seamless looping
+
+        // Stop animation when manually scrolling
+        let isScrolling;
+        scrollWrapper.addEventListener("scroll", function () {
+            clearTimeout(isScrolling);
+            scrollContent.style.animation = "none"; // Pause animation
+
+            isScrolling = setTimeout(() => {
+                scrollContent.style.animation = "scrollenemies 50s linear infinite"; // Resume animation
+            }, 2000); // Restart after 2 seconds of inactivity
+        });
+
+        // Allow scrolling with mouse wheel
+        scrollWrapper.addEventListener("wheel", function (event) {
+            event.preventDefault();
+            scrollWrapper.scrollLeft += event.deltaY * 2; // Adjust speed
+        });
+    });
+
+</script>

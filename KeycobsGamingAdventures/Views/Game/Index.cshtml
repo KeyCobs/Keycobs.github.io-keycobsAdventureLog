@@ -1,0 +1,107 @@
+﻿@using KeycobsGamingAdventures.Models.Entity
+@model IEnumerable<Games>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Cards</title>
+    <style>
+        :root {
+            --card-height: 300px;
+            --card-width: calc(var(--card-height) / 1.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .card {
+            width: var(--card-width);
+            height: var(--card-height);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 0 10px;
+            perspective: 1000px;
+            transition: transform 0.3s;
+        }
+
+            .card:hover {
+                transform: scale(1.05);
+            }
+
+        .wrapper {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: all 0.5s;
+            z-index: -1;
+        }
+
+        .cover-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .card:hover .wrapper {
+            transform: perspective(900px) translateY(-5%) rotateX(15deg);
+            box-shadow: 2px 25px 25px rgba(0, 0, 0, 0.6);
+        }
+
+        .title, .character {
+            width: 100%;
+            transition: opacity 0.5s ease-in-out, transform 0.5s;
+            position: absolute;
+        }
+
+        .title {
+            bottom: 10px;
+        }
+
+        .character {
+            opacity: 0;
+            bottom: 30px;
+        }
+
+        .card:hover .title {
+            transform: translate3d(0%, -40px, 50px);
+        }
+
+        .card:hover .character {
+            opacity: 1;
+            transform: translate3d(0%, -20%, 50px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        @foreach (var game in Model)
+        {
+            <a href="@Url.Action("Index", new { GameId = game.GameId, Controller = "AdventureLog" })" target="_blank">
+                <div class="card">
+                    <div class="wrapper">
+                        <img src="lib/images/@game.CoverImage" class="cover-image" alt="@game.Title Cover" />
+                    </div>
+                    <img src="lib/images/@game.TitleImage" class="title" alt="@game.Title Title" />
+                    <img src="lib/images/@game.CharacterImage" class="character" alt="@game.Title Character" />
+                </div>
+            </a>
+        }
+    </div>
+</body>
+</html>
