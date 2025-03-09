@@ -1,4 +1,5 @@
 using KeycobsGamingAdventures.Models;
+using KeycobsGamingAdventures.Models.Mapper;
 using KeycobsGamingAdventures.Repository;
 using KeycobsGamingAdventures.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,9 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 
 builder.Services.AddScoped<IAdventureLogRepository, AdventureLogRepository>()
                 .AddScoped<IEnemyRepository, EnemyRepository>()
-                .AddScoped<IGameRepository, GameRepository>();
+                .AddScoped<IGameRepository, GameRepository>()
+                .AddScoped<ILocationRepository, LocationRepository>();
+
 
 
 var app = builder.Build();

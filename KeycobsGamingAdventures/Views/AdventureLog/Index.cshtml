@@ -5,7 +5,18 @@
     ViewData["Title"] = "Game Log";
 }
 
-<h2>Game Log</h2>
+<div class="top-deaths-container">
+    <h3>Top 3 Most Deaths</h3>
+    <ol>
+        @foreach (var item in ViewBag.TopDeaths)
+        {
+            <li>
+                <strong>@item.Enemy.Name</strong> <p> - @item.DeathCount deaths </p>
+            </li>
+        }
+    </ol>
+</div>
+
 
 <div class="enemy-scroll-container">
     <h3>Enemies</h3>
@@ -16,16 +27,24 @@
                 @if (log != null && !string.IsNullOrWhiteSpace(log.Name))
                 {
                     <div class="enemy-item">
-                        <img src="~/Lib/Images/@log.EnemyImage" alt="@log.Name" class="enemy-image" />
-                        <span class="enemy-name">@log.Name</span>
+                        <a asp-controller="Enemy" asp-action="Index" asp-route-EnemyId="@log.EnemyId">
+                            <img src="~/Lib/Images/@log.EnemyImage" alt="@log.Name" class="enemy-image" />
+                            <span class="enemy-name">@log.Name</span>
+                        </a>
                     </div>
                 }
             }
+
         </div>
     </div>
 </div>
 
 <br>
+<div class="search-container">
+    <input type="text" id="enemySearch" placeholder="Search for enemies..." class="search-input" />
+</div>
+
+<br />
 
 <table class="table">
     <thead>
@@ -33,6 +52,8 @@
             <th>Id</th>
             <th>Type</th>
             <th>Event</th>
+            <th>Location</th>
+            <th>Region</th>
             <th>Enemy Name</th>
             <th>Timestamp</th>
         </tr>
@@ -44,7 +65,13 @@
                 <td>@log.LogId</td>
                 <td>@log.Type</td>
                 <td>@log.Event</td>
-                <td>@(log.Enemy != null ? log.Enemy.Name : "")</td>
+                <td>@log.Location.Name</td>
+                <td>@log.Location.Type (@log.Location.SubType)</td>
+                <td>
+                    <a asp-controller="Enemy" asp-action="Index" asp-route-EnemyId="@log.EnemyId">
+                        @log.EnemyId @(log.Enemy != null ? $"({log.Enemy.Name})" : "")
+                    </a>
+                </td>
                 <td>@log.TimeStamp</td>
             </tr>
         }
@@ -52,6 +79,37 @@
 </table>
 
 <style>
+    .top-deaths-container {
+        margin-bottom: 20px;
+        background-color: #f7f7f7;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+        .top-deaths-container h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .top-deaths-container ol {
+            list-style-type: decimal;
+            margin-left: 20px;
+        }
+
+    .search-container {
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .search-input {
+        padding: 5px 10px;
+        width: 200px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
     .enemy-item {
         display: flex;
         flex-direction: column;
@@ -127,6 +185,24 @@
 </style>
 
 <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById('enemySearch');
+        const enemyItems = document.querySelectorAll('.enemy-item');
+
+        searchInput.addEventListener('input', function () {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            enemyItems.forEach(item => {
+                const enemyName = item.querySelector('.enemy-name').textContent.toLowerCase();
+                if (enemyName.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+
     document.addEventListener("DOMContentLoaded", function () {
         let scrollWrapper = document.querySelector('.enemy-scroll-wrapper');
         let scrollContent = document.querySelector('.enemy-scroll-content');

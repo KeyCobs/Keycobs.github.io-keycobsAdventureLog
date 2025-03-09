@@ -1,5 +1,5 @@
 INSERT INTO Locations (Name, Type, SubType, GameId)
-VALUES ('Waypoint Ruins Cellar','Limegrave','Dungeon',1)
+VALUES ('Village of the Albinauries','Liurnia of the Lakes','',1)
 
 
 

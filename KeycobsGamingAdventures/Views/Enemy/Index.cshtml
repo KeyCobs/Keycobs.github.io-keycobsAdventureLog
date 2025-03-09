@@ -1,0 +1,66 @@
+﻿@using KeycobsGamingAdventures.Models.ViewModel
+@model EnemyView
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="row g-0">
+            <!-- Image -->
+            <div class="col-md-4">
+                <img src="~/Lib/Images/@Model.EnemyImage" class="img-fluid rounded-start" alt="@Model.Name">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h2 class="card-title">@Model.Name</h2>
+                    <p class="text-muted">Game: <strong>@(Model.Game.Title ?? "Unknown")</strong></p>
+                    <p class="text-muted">Location: <strong>@(Model.Location?.Name ?? "Unknown")</strong></p>
+                    <p class="text-muted">Damage Type: <strong>@Model.DamageType</strong></p>
+                    <p class="text-muted">
+                        Boss: <span class="badge bg-@(Model.IsBoss ? "danger" : "success")">
+                            @(Model.IsBoss ? "Yes" : "No")
+                        </span>
+                    </p>
+
+                    <!-- Kill Stats -->
+                    <div class="mt-3">
+                        <h5>Stats</h5>
+                        <p>Kill Count: <strong class="text-warning">@Model.DeathCounter</strong></p>
+                        <p>
+                            Is Killed: <span class="badge bg-@(Model.IsKilled ? "danger" : "success")">
+                                @(Model.IsKilled ? "Yes" : "No")
+                            </span>
+                        </p>
+                    </div>
+
+                    @if (Model.adventureLogs?.Any() == true)
+                    {
+                        <div class="mt-3">
+                            <h5>Adventure Logs</h5>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Event</th>
+                                        <th>Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var log in Model.adventureLogs)
+                                    {
+                                        <tr>
+                                            <td>@log.Event</td>
+                                            <td>@log.TimeStamp</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,5 +1,6 @@
 ﻿using KeycobsGamingAdventures.Models;
 using KeycobsGamingAdventures.Models.Entity;
+using KeycobsGamingAdventures.Models.ViewModel;
 using KeycobsGamingAdventures.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +29,37 @@ namespace KeycobsGamingAdventures.Repository
         {
             throw new NotImplementedException();
         }
+
+        public async Task<EnemyView> GetEnemyViewModelByIdAsync(int id)
+        {
+            var enemy = await _context.Enemies
+                .Where(x => x.EnemyId == id)
+                .Select(e => new EnemyView
+                {
+                    EnemyId = e.EnemyId,
+                    Name = e.Name,
+                    LocationId = e.LocationId,
+                    IsBoss = e.IsBoss,
+                    DamageType = e.DamageType,
+                    GameId = e.GameId,
+                    EnemyImage = e.EnemyImage,
+                    Game = e.Game,
+                    Location = e.Location,
+                    adventureLogs = e.adventureLogs.Where(x => x.EnemyId == id).ToList(),
+                })
+                .FirstOrDefaultAsync();
+
+            // Fetch IsKilled and DeathCounter separately to avoid async inside LINQ
+            enemy.IsKilled = await _context.AdventureLog
+                .AnyAsync(x => x.EnemyId == id && x.Type == "Killed");
+
+            enemy.DeathCounter = await _context.AdventureLog
+                .CountAsync(x => x.EnemyId == id && x.Type == "Death");
+
+            return enemy;
+        }
+
+
 
         public Task<Enemies> GetEnemyWithMostDeathByGameIdAsync(int id)
         {

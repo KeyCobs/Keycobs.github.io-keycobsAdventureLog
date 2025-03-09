@@ -20,7 +20,11 @@ namespace KeycobsGamingAdventures.Repository
 
         public async Task<IEnumerable<AdventureLog>> GetAllLogByGameIdAsync(int id)
         {
-            return await _context.AdventureLog.Where(x => x.GameId == id).OrderBy(x => x.LogId).Include(x => x.Enemy).ToListAsync();
+            return await _context.AdventureLog.Where(x => x.GameId == id)
+                                              .OrderBy(x => x.LogId)
+                                              .Include(x => x.Enemy)
+                                              .Include(x => x.Location)
+                                              .ToListAsync();
         }
 
         public Task<AdventureLog> GetLogByIdAsync(int id)
