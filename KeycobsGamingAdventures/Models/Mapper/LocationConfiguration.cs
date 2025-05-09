@@ -18,7 +18,7 @@ namespace KeycobsGamingAdventures.Models.Mapper
 
             builder.HasMany(e => e.Enemies)
                    .WithOne(x => x.Location)
-                   .HasForeignKey(x => x.EnemyId);
+                   .HasForeignKey(x => x.LocationId);
         }
     }
 }

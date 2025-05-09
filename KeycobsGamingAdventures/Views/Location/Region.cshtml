@@ -1,0 +1,180 @@
+﻿@model KeycobsGamingAdventures.Models.ViewModel.RegionView
+
+@{
+    ViewData["Title"] = "Region Overview";
+}
+
+<style>
+    /* Ensures all scrollable sections have the same style */
+    .scrollable-box {
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+    }
+
+    .scrollable-table {
+        max-height: 400px; /* Logs & Locations tables */
+        overflow-y: auto;
+    }
+
+    /* Enemy Image in Table */
+    .enemy-table-img {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Make table rows clickable */
+    .clickable-row {
+        cursor: pointer;
+    }
+
+        .clickable-row:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+    /* Sorting styles */
+    .sortable:hover {
+        cursor: pointer;
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+</style>
+
+<div class="container region-container mt-4">
+
+    <div class="row">
+        <!-- 🦴 Enemies Section (Scrollable, Same Height as Map) -->
+        <div class="col-md-6">
+            <h2 class="text-center">🦴 Enemies in this Region</h2>
+            <div class="scrollable-box">
+                <table class="table table-hover table-sm" id="enemyTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="sortable" onclick="sortTable('enemyTable', 0)">Image</th>
+                            <th class="sortable" onclick="sortTable('enemyTable', 1)">Name</th>
+                            <th class="sortable" onclick="sortTable('enemyTable', 2)">Deaths ☠️</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var enemy in Model.Enemies)
+                        {
+                            <tr class="clickable-row" onclick="window.location.href='@Url.Action("Index", "Enemy", new { EnemyId = enemy.EnemyId })'">
+                                <td>
+                                    <img src="~/Lib/Images/@enemy.EnemyImage" alt="@enemy.Name" class="enemy-table-img">
+                                </td>
+                                <td>@enemy.Name</td>
+                                <td>@(Model.DeathCounts.ContainsKey(enemy.EnemyId) ? Model.DeathCounts[enemy.EnemyId] : 0)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 🗺️ Map Section (Same Height as Enemies List) -->
+        <div class="col-md-6">
+            <h2 class="text-center">🗺️ Region Map</h2>
+            <div class="scrollable-box">
+                <iframe src="https://mapgenie.io/elden-ring/maps/the-lands-between?locationIds=168977"
+                        class="border-0 rounded" height="500px" width="100%">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📜 Logs & 🏰 Locations Section (Two Scrollable Columns Below) -->
+    <div class="row mt-5">
+        <!-- Logs Column (Scrollable) -->
+        <div class="col-md-6">
+            <h2 class="text-center">📜 Adventure Logs</h2>
+            <div class="table-responsive scrollable-table">
+                <table class="table table-striped table-hover table-sm shadow-sm" id="logTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="sortable" onclick="sortTable('logTable', 0)">Log ID</th>
+                            <th class="sortable" onclick="sortTable('logTable', 1)">Type</th>
+                            <th class="sortable" onclick="sortTable('logTable', 2)">Event</th>
+                            <th class="sortable" onclick="sortTable('logTable', 3)">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var log in Model.Logs)
+                        {
+                            <tr>
+                                <td>@log.LogId</td>
+                                <td>@log.Type</td>
+                                <td>@log.Event</td>
+                                <td>@log.TimeStamp.ToString("yyyy-MM-dd HH:mm")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Locations Column (Scrollable) -->
+        <div class="col-md-6">
+            <h2 class="text-center">🏰 Locations</h2>
+            <div class="table-responsive scrollable-table">
+                <table class="table table-striped table-hover table-sm shadow-sm" id="locationTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="sortable" onclick="sortTable('locationTable', 0)">Name</th>
+                            <th class="sortable" onclick="sortTable('locationTable', 1)">Type</th>
+                            <th class="sortable" onclick="sortTable('locationTable', 2)">SubType</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var location in Model.Locations)
+                        {
+                            <tr>
+                                <td>@location.Name</td>
+                                <td>@location.Type</td>
+                                <td>@location.SubType</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    function sortTable(tableId, columnIndex) {
+        var table = document.getElementById(tableId);
+        var tbody = table.querySelector("tbody");
+        var rows = Array.from(tbody.rows); // Get table rows
+        var isAscending = table.getAttribute("data-sort-order") !== "asc";
+
+        rows.sort(function (rowA, rowB) {
+            var cellA = rowA.cells[columnIndex].innerText.trim();
+            var cellB = rowB.cells[columnIndex].innerText.trim();
+
+            // Handle numeric sorting
+            var numA = parseFloat(cellA);
+            var numB = parseFloat(cellB);
+            if (!isNaN(numA) && !isNaN(numB)) {
+                return isAscending ? numA - numB : numB - numA;
+            }
+
+            return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+        });
+
+        // Remove all rows and re-add them to tbody
+        rows.forEach(row => tbody.appendChild(row));
+
+        // Reapply Bootstrap table-striped (Forcing re-render)
+        table.classList.remove("table-striped");
+        void table.offsetWidth; /* Trick to force reflow */
+        table.classList.add("table-striped");
+
+        // Toggle sort order for next click
+        table.setAttribute("data-sort-order", isAscending ? "asc" : "desc");
+    }
+</script>

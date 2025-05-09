@@ -25,6 +25,21 @@ namespace KeycobsGamingAdventures.Repository
             return await _context.Enemies.Where(x => x.GameId == id).ToListAsync();
         }
 
+        public Task<IEnumerable<Enemies>> GetEnemiesByLocationIdAsync(int locationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Enemies>> GetEnemiesByRegionAsync(string type)
+        {
+            var e = _context.Enemies.Include(x => x.Location).AsQueryable(); // No need for `await` here
+            var a = await e.Where(x => x.Location != null && x.Location.Type == type)
+                          .ToListAsync();
+            return a;
+        }
+
+
+
         public Task<Enemies> GetEnemyById(int id)
         {
             throw new NotImplementedException();

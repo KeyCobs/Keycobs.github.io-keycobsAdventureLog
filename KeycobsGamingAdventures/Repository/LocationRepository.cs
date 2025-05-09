@@ -1,6 +1,7 @@
 ﻿using KeycobsGamingAdventures.Models;
 using KeycobsGamingAdventures.Models.Entity;
 using KeycobsGamingAdventures.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace KeycobsGamingAdventures.Repository
 {
@@ -22,9 +23,9 @@ namespace KeycobsGamingAdventures.Repository
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Locations>> GetAllLocationsByTypeAsync(string type)
+        public async Task<IEnumerable<Locations>> GetAllLocationsByTypeAsync(string type)
         {
-            throw new NotImplementedException();
+            return await _context.Locations.Where(x => x.Type == type).ToListAsync();
         }
 
         public Task<IEnumerable<Locations>> GetAllTypeAsync()

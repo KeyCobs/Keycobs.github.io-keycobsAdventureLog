@@ -10,5 +10,8 @@ namespace KeycobsGamingAdventures.Repository.Interfaces
         Task<Enemies> GetEnemyById(int id);
         Task<IEnumerable<Enemies>> GetAllEnemiesByGameIdAsync(int id);
         Task<EnemyView> GetEnemyViewModelByIdAsync(int id);
+
+        Task<IEnumerable<Enemies>> GetEnemiesByRegionAsync(string type);
+        Task<IEnumerable<Enemies>> GetEnemiesByLocationIdAsync(int locationId);
     }
 }

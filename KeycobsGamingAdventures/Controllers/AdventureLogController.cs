@@ -23,25 +23,39 @@ namespace KeycobsGamingAdventures.Controllers
             var logs = await _AdventureLog.GetAllLogByGameIdAsync(GameId);
             ViewBag.Enemies = await _Enemies.GetAllEnemiesByGameIdAsync(GameId);
 
-            var topDeaths = logs.Where(x => x.Type == "Death")  // Only consider "Death" logs
-           .GroupBy(l => l.EnemyId)  // Group by EnemyId
-           .Select(g => new
-           {
-               EnemyId = g.Key,
-               Enemy = logs.FirstOrDefault(l => l.EnemyId == g.Key)?.Enemy, // Get the first instance to retrieve Enemy details
-               DeathCount = g.Count()  // Count total deaths per EnemyId
-           })
-           .OrderByDescending(x => x.DeathCount)  // Order by highest death count
-           .Take(3)  // Get the top 3
-           .ToList();
+            var topDeaths = logs
+                        .Where(x => x.Type == "Death" && x.Enemy != null)
+                        .GroupBy(l => l.EnemyId)
+                        .Select(g =>
+                        {
+                            var firstLog = g.FirstOrDefault(); // Get first log entry for this enemy
+                            return new
+                            {
+                                Enemy = firstLog?.Enemy,
+                                DeathCount = g.Count()
+                            };
+                        })
+                        .OrderByDescending(x => x.DeathCount)
+                        .ToList();
 
+            var topLocationDeaths = logs.Where(x => x.Type == "Death" && x.Enemy != null)
+                                        .GroupBy(l => l.LocationId)
+                                        .Select(g =>
+                                        {
+                                            var firsLog = g.FirstOrDefault();
+                                            return new
+                                            {
+                                                Location = firsLog.Location,
+                                                DeathCount = g.Count()
+                                            };
+                                        })
+                                        .OrderByDescending(x => x.DeathCount)
+                                        .ToList();
             ViewBag.TopDeaths = topDeaths;
-
-
-
-            ViewBag.TopDeaths = topDeaths;
+            ViewBag.TopLocationDeaths = topLocationDeaths;
 
             return View(logs.Reverse());
+
         }
     }
 

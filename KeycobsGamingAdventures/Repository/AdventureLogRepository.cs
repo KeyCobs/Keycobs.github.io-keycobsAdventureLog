@@ -27,6 +27,11 @@ namespace KeycobsGamingAdventures.Repository
                                               .ToListAsync();
         }
 
+        public async Task<IEnumerable<AdventureLog>> GetAllLogByRegionAsync(string type)
+        {
+            return await _context.AdventureLog.Where(x => x.Location.Type == type).ToListAsync();
+        }
+
         public Task<AdventureLog> GetLogByIdAsync(int id)
         {
             throw new NotImplementedException();
