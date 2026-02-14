@@ -33,14 +33,15 @@ SET @GameId = 3
 --INSERT INTO AdventureLog (Timestamp, Event, Type, LocationId, GameId, EnemyId)
 --VALUES (CURRENT_TIMESTAMP, 'Lost graced Discovered', 'Discovery', @LocationId,1,null);
 
-
+--DELETE FROM AdventureLog
+--WHERE LogId > 681
 
 --DECLARE @LocationId INT
 --DECLARE @EnemyId INT
---SET @LocationId = 124
---SET @EnemyId = 94
+--SET @LocationId = 150
+--SET @EnemyId = 129
 --INSERT INTO AdventureLog (Timestamp, Event, Type, LocationId, GameId, EnemyId)
---VALUES (CURRENT_TIMESTAMP, 'Fuck', 'Death', @LocationId,@GameId,@EnemyId);
+--VALUES (CURRENT_TIMESTAMP, 'ugh.', 'Death', @LocationId,@GameId,@EnemyId);
 
 --UPDATE AdventureLog
 --SET  LocationId = 89
@@ -49,13 +50,18 @@ SET @GameId = 3
 --Killed Boss Fight
 DECLARE @LocationId INT
 DECLARE @EnemyId INT
-SET @LocationId = 126
-SET @EnemyId = 96
-INSERT INTO AdventureLog (Timestamp, Event, Type, LocationId, GameId, EnemyId)
-VALUES (CURRENT_TIMESTAMP, 'Boss Fight', 'Death', @LocationId,@GameId,@EnemyId);
+SET @LocationId = 2114
+SET @EnemyId = 2081
 --INSERT INTO AdventureLog (Timestamp, Event, Type, LocationId, GameId, EnemyId)
---VALUES (CURRENT_TIMESTAMP, 'Boss Defeated', 'Killed', @LocationId,@GameId,@EnemyId);
+--VALUES (CURRENT_TIMESTAMP, 'Boss Fight', 'Death', @LocationId,@GameId,@EnemyId);
+INSERT INTO AdventureLog (Timestamp, Event, Type, LocationId, GameId, EnemyId)
+VALUES (CURRENT_TIMESTAMP, 'Boss Defeated', 'Killed', @LocationId,@GameId,@EnemyId);
 
+
+--UPDATE AdventureLog
+--SET LocationId = 145,
+--EnemyId = 123
+--WHERE LogId = 700
 
 --DELETE FROM AdventureLog
 --WHERE EnemyId = 60 AND Type = 'Killed'
@@ -63,14 +69,14 @@ VALUES (CURRENT_TIMESTAMP, 'Boss Fight', 'Death', @LocationId,@GameId,@EnemyId);
 SELECT LogId, Event, AdventureLog.Type, e.Name AS 'Enemy Name', l.Name, l.Type AS 'Location' ,l.SubType, TimeStamp FROM AdventureLog
 LEFT JOIN Enemies AS e ON e.EnemyId = AdventureLog.EnemyId
 JOIN Locations AS l ON l.LocationId = AdventureLog.LocationId
-WHERE AdventureLog.GameId = @GameId
+WHERE AdventureLog.GameId = 3
 ORDER BY LogId DESC
 
 
-SELECT 
-    COUNT(CASE WHEN b.Event LIKE '%fell%' THEN 1 END) AS fell_count,
-    COUNT(CASE WHEN a.Type = 'Killed' THEN 1 END) AS Boss_Defeated
-FROM AdventureLog AS b 
-JOIN AdventureLog AS a ON a.LogId = b.LogId
-WHERE a.GameId = @GameId;
+--SELECT 
+--    COUNT(CASE WHEN b.Event LIKE '%fell%' THEN 1 END) AS fell_count,
+--    COUNT(CASE WHEN a.Type = 'Killed' THEN 1 END) AS Boss_Defeated
+--FROM AdventureLog AS b 
+--JOIN AdventureLog AS a ON a.LogId = b.LogId
+--WHERE a.GameId = @GameId;
 

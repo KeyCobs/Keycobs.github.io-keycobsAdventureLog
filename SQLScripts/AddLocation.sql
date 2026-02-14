@@ -2,7 +2,7 @@ DECLARE @GameId INT
 SET @GameId = 3
 
 INSERT INTO Locations (Name, Type, SubType, GameId)
-VALUES ('Ancient Bridge','Forgotten Battlefield','',@GameId)
+VALUES ('Peak','The Reacher','',@GameId)
 
 --UPDATE Locations
 --SET Type = 'Liurnia of the Lakes'
